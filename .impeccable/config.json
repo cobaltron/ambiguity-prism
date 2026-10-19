@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gpt-thin-border-wide-shadow",
+        "value": "*",
+        "files": [
+          "ui/prism.css"
+        ],
+        "createdAt": "2026-10-05T07:52:19.788Z",
+        "reason": "Claude (builder, not user-confirmed): on .input-shell the blur alpha is calc(var(--sev) * .45), so at rest the element renders the 1px edge ONLY with zero elevation; the shadow materialises solely as the severity reading (entropy over raw Nouls). The detector reads the declaration statically and cannot evaluate the alpha binding."
+      },
+      {
+        "rule": "gpt-thin-border-wide-shadow",
+        "value": "*",
+        "files": [
+          "ui/index.html"
+        ],
+        "createdAt": "2026-10-05T07:52:37.125Z",
+        "reason": "Claude (builder, not user-confirmed): same .input-shell rule as the ui/prism.css entry - the blur alpha is calc(var(--sev) * .45), so at rest the element renders the 1px edge ONLY with zero elevation; the shadow materialises solely as the severity reading. The detector resolves applied styles against index.html and cannot evaluate the alpha binding."
+      }
+    ]
+  }
+}

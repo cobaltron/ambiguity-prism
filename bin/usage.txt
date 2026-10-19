@@ -1,0 +1,38 @@
+Ambiguity Prism — detects interpretation ambiguity in short, high-stakes text.
+Recall is bounded by the enumerated reading set.
+
+USAGE
+  prism analyze <file|->       Report every clause (§9 render)
+  prism clause "<sentence>"    Analyze one sentence
+  prism rewrite <file> [id]    Side-by-side view of the fork to separate
+  prism probe [pairs.json]     Forked vs clean separation (phase-1 exit check)
+  prism calibrate <gold.json>  Fit HIGH/LOW on half, score the held-out half (§10)
+  prism lint [file]            Lint every reading the axis table produces (§13)
+  prism serve [--port 8787]    Local proxy + the prism UI
+
+OPTIONS
+  --provider auto|jev|heuristic   auto = Jev when TYPESAFE_API_KEY is set (default)
+  --stance recall|precision       Dead-zone stance; recall is the default
+  --high N --low N --exit-high N  Override thresholds directly
+  --json                          Machine-readable output
+  --verbose                       Show clean clauses in full
+  --only ambiguous|underspecified|uncertain
+  --requirements-only             Skip lines with no RFC-2119 keyword
+  --proposals <file.json>         Reviewed offline reading proposals (§5)
+  --no-cache                      Ignore the content-addressed cache
+  --concurrency N                 Parallel clauses (default 6)
+  --fail-on-ambiguous             Exit 2 when any clause is ambiguous (CI use)
+
+ENVIRONMENT  (read from .env at the project root, or from the shell;
+              a shell variable always overrides .env)
+  TYPESAFE_API_KEY   Required. Held by the proxy only, never sent to the page (§12)
+  TYPESAFE_API_BASE  Defaults to https://api.typesafe.ai  (+ /v1/systemone)
+  TYPESAFE_MODEL     Defaults to the pinned jev-1.13.0; aliases are refused
+
+There is NO FALLBACK. Without a key every entry point fails and says what to do.
+Copy .env.example to .env to get started.
+
+  --provider heuristic   An explicit offline test double, used by the test suite
+                         to exercise the mechanism without burning calls. Its
+                         values are a rule table, not a model, and are labelled
+                         synthetic in every output. Never selected for you.

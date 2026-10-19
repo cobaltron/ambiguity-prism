@@ -1,0 +1,22 @@
+{
+  "note": "Example reviewed artifact (§5 source 2). Hand-written, not model-generated; it exists to exercise the loader and the lint. See docs/proposals.md.",
+  "entries": [
+    {
+      "clause": "The coordinator must settle the balance before the window closes.",
+      "reviewedBy": "build author",
+      "reviewedAt": "2026-10-04",
+      "readings": [
+        {
+          "id": "settle_transfer",
+          "label": "settle = transfer the funds",
+          "instructions": "Read the sentence literally, with no charity and no outside context. Does the sentence require the funds to be transferred before the window closes?"
+        },
+        {
+          "id": "settle_reconcile",
+          "label": "settle = reconcile the ledger",
+          "instructions": "Read the sentence literally, with no charity and no outside context. Does the sentence require the ledger entries to be reconciled before the window closes?"
+        }
+      ]
+    }
+  ]
+}

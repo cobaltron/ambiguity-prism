@@ -1,0 +1,14 @@
+{
+  // Hosted demo. Local development still uses `npm run serve` (server/proxy.js).
+  // Secret: npx wrangler secret put TYPESAFE_API_KEY
+  "name": "ambiguity-prism",
+  "main": "worker/index.js",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./ui",
+    "binding": "ASSETS",
+    "not_found_handling": "none"
+  },
+  "observability": { "enabled": true }
+}

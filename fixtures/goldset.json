@@ -1,0 +1,29 @@
+{
+  "provenance": "HAND-WRITTEN by the author of this build, single annotator, not cross-checked. §10 names linguistics garden-path corpora and requirements-engineering ambiguity-labelled sets as leads; both were unverified in the design doc and remain unverified here. This file is a pipeline smoke test, NOT a benchmark. Any recall number computed from it is provisional and was produced by someone who knew what the detector looks for.",
+  "labels": { "ambiguous": "admits two readings a competent implementer could act on differently", "clear": "admits one reading" },
+  "items": [
+    { "text": "The service should retry failed requests up to three times before returning an error.", "label": "ambiguous", "axis": "boundary" },
+    { "text": "The client must poll the endpoint up to five times before giving up.", "label": "ambiguous", "axis": "boundary" },
+    { "text": "The job may be restarted twice.", "label": "ambiguous", "axis": "boundary" },
+    { "text": "The gateway must compress or encrypt the response body.", "label": "ambiguous", "axis": "coordination" },
+    { "text": "The operator must supply a username or an API token.", "label": "ambiguous", "axis": "coordination" },
+    { "text": "The worker shall archive all records that exceed the retention window.", "label": "ambiguous", "axis": "quantifier" },
+    { "text": "The audit must cover any account that holds a delegated key.", "label": "ambiguous", "axis": "quantifier" },
+    { "text": "The scheduler must process the queued request log before the next window opens.", "label": "ambiguous", "axis": "attachment" },
+    { "text": "The service must retain the encrypted user data for one year.", "label": "ambiguous", "axis": "attachment" },
+    { "text": "The gateway shall forward the request to the primary server, and the worker must retry it after a timeout.", "label": "ambiguous", "axis": "reference" },
+    { "text": "The broker shall copy the message to the dead letter queue, and the consumer must acknowledge it.", "label": "ambiguous", "axis": "reference" },
+
+    { "text": "The service must retry a failed request up to three times in total, counting the first attempt.", "label": "clear", "axis": "boundary" },
+    { "text": "The client must poll the endpoint at most five times in addition to the first call.", "label": "clear", "axis": "boundary" },
+    { "text": "The gateway must compress the response body, encrypt it, or both.", "label": "clear", "axis": "coordination" },
+    { "text": "The operator must supply exactly one of a username or an API token.", "label": "clear", "axis": "coordination" },
+    { "text": "The worker shall archive only those records that exceed the retention window.", "label": "clear", "axis": "quantifier" },
+    { "text": "The scheduler must process the queued-request log before the next window opens.", "label": "clear", "axis": "attachment" },
+    { "text": "The API shall return HTTP status 404 when the requested resource does not exist.", "label": "clear", "axis": "obligation" },
+    { "text": "The service shall respond within 200 ms at the p99 percentile for all read endpoints.", "label": "clear", "axis": "none" },
+    { "text": "The client must validate the signature before accepting the payload.", "label": "clear", "axis": "obligation" },
+    { "text": "The gateway shall forward the request to the primary server, and the worker must retry the request after a timeout.", "label": "clear", "axis": "reference" },
+    { "text": "The system must write one audit record for each completed transaction.", "label": "clear", "axis": "none" }
+  ]
+}

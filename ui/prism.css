@@ -1,0 +1,504 @@
+﻿/* Ambiguity Prism â€” the reading space, on paper.
+   ---------------------------------------------------------------------------
+   One binding governs the whole visual: a beam's weight IS its raw Noul.
+   Nothing here normalises, rescales or rank-orders that value.
+
+   Inverting the ground changes the material, not the binding. On black, a lit
+   reading gained LUMINANCE â€” it glowed. On paper, light is the default state, so
+   a lit reading gains INK: it darkens, saturates, and sits down on the page with
+   a real shadow. A reading the clause barely supports is nearly the colour of the
+   paper it is printed on. Both directions say the same thing â€” this reading is
+   present â€” in the only currency the medium has.
+
+   Light is chosen here for the use scene: an author editing a requirements
+   document in daylight, beside the document itself. There is no dark variant;
+   `color-scheme: light` tells the browser to keep its own surfaces light too. */
+
+:root {
+  color-scheme: light;
+
+  /* Paper. Warm neutrals, because the subject is a document. */
+  --paper: #fcfbf9;
+  --paper-raise: #ffffff;
+  --paper-sunken: #f5f3ef;
+  --rule: #e4e0d9;
+  --rule-strong: #cdc8bf;
+
+  /* Ink. Every step verified â‰¥4.5:1 on --paper. */
+  --ink: #1a1c20;
+  --ink-2: #4a4e57;
+  --ink-3: #6b6f78;
+
+  /* Semantic ink. The -rgb pairs feed rgb(â€¦ / Î±) so alpha can track the Noul. */
+  --fork: #b3261e;
+  --fork-rgb: 179 38 30;
+  --clear: #0f6b45;
+  --clear-rgb: 15 107 69;
+  --dead: #6b6f78;
+  --dead-rgb: 107 111 120;
+  --vague: #8a5300;
+  --vague-rgb: 138 83 0;
+
+  --beam-gap: 28px;
+  --ease: cubic-bezier(.22, .68, .18, 1);
+  --collapse: 540ms;
+
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Mono for the clause and for every number: this is measurement, not costume.
+     A boundary-inclusivity defect turns on one word, so character-exact
+     rendering is the point. */
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+  --shadow-card: 0 1px 2px rgb(26 28 32 / .04), 0 10px 28px -16px rgb(26 28 32 / .14);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body { min-height: 100vh; }
+
+/* Browser surfaces belong to the design too. */
+::selection { background: rgb(var(--fork-rgb) / .16); color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--fork);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+* { scrollbar-color: var(--rule-strong) transparent; scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--rule-strong);
+  border: 3px solid var(--paper);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+
+.shell {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 20px 72px;
+}
+
+/* â”€â”€ masthead â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.masthead { margin-bottom: 30px; }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.brand-mark { display: block; flex: none; color: var(--ink); }
+
+h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+
+.bound {
+  margin: 12px 0 0;
+  font-size: .8rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+  max-width: 68ch;
+}
+
+.banner {
+  margin: 0 0 24px;
+  padding: 11px 14px;
+  border: 1px solid rgb(var(--vague-rgb) / .3);
+  border-radius: 5px;
+  background: rgb(var(--vague-rgb) / .05);
+  color: #6d4200;
+  font-size: .79rem;
+  line-height: 1.55;
+}
+
+.banner strong { color: #593500; }
+
+/* â”€â”€ the input, carrying the severity reading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.stage { margin-bottom: 38px; }
+
+/* --sev is entropy over the raw Nouls: how evenly the clause is forked. It
+   drives an inset ring and a tinted lift, both of which read as the sheet being
+   marked up â€” not as a halo pasted behind a box. */
+.input-shell {
+  position: relative;
+  padding: 15px 17px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 7px;
+  background: var(--paper-raise);
+  --sev: 0;
+  --accent: var(--fork-rgb);
+  /* At rest this is a defined edge and nothing else â€” no ambient elevation. The
+     shadow exists only as the severity reading, so when the sheet lifts, that
+     lift means something. */
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--accent) / calc(var(--sev) * .5)),
+    0 2px 4px -2px rgb(var(--accent) / calc(var(--sev) * .3)),
+    0 10px 26px -12px rgb(var(--accent) / calc(var(--sev) * .45));
+  transition: box-shadow var(--collapse) var(--ease), border-color 220ms var(--ease);
+}
+
+.input-shell:focus-within { border-color: var(--rule-strong); }
+
+.input-label {
+  display: block;
+  font-size: .7rem;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 8px;
+}
+
+.clause-input {
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  resize: vertical;
+  background: transparent;
+  color: var(--ink);
+  caret-color: var(--fork);
+  font-family: var(--mono);
+  font-size: 1.02rem;
+  line-height: 1.62;
+  outline: none;
+}
+
+.clause-input::placeholder { color: var(--ink-3); }
+
+.input-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-top: 11px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  font-size: .73rem;
+}
+
+.regime {
+  font-weight: 600;
+  letter-spacing: .01em;
+  color: var(--ink-2);
+}
+.regime[data-regime="ambiguous"] { color: var(--fork); }
+.regime[data-regime="unambiguous"], .regime[data-regime="clean"] { color: var(--clear); }
+.regime[data-regime="uncertain"] { color: var(--ink-3); }
+.regime[data-regime="underspecified"] { color: var(--vague); }
+/* Not a verdict about the text â€” a failure of the pipeline. */
+.regime[data-regime="error"] { color: var(--fork); }
+
+.sev, .latency {
+  color: var(--ink-3);
+  font-family: var(--mono);
+  font-size: .7rem;
+  font-variant-numeric: tabular-nums;
+}
+.latency { margin-left: auto; }
+
+/* â”€â”€ example chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 15px;
+}
+
+.chip {
+  border: 1px solid var(--rule);
+  background: var(--paper-raise);
+  color: var(--ink-2);
+  border-radius: 999px;
+  padding: 5px 13px;
+  font: inherit;
+  font-size: .75rem;
+  cursor: pointer;
+  transition: border-color 160ms, color 160ms, background 160ms, box-shadow 160ms;
+}
+.chip:hover {
+  border-color: var(--rule-strong);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgb(26 28 32 / .05);
+}
+.chip:active { background: var(--paper-sunken); }
+.chip-fix { border-color: rgb(var(--clear-rgb) / .3); color: #0d5a3a; }
+.chip-fix:hover { border-color: var(--clear); background: rgb(var(--clear-rgb) / .05); }
+
+/* â”€â”€ reading space â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+/* Sunken, so the beams read as marks ON a sheet rather than floating above it.
+   Flex column so a reordered axis can move via `order` without a DOM move,
+   which would reset its transitions. */
+.reading-space {
+  display: flex;
+  flex-direction: column;
+  min-height: 190px;
+  padding: 26px 22px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-sunken);
+}
+
+.empty {
+  margin: 34px auto;
+  max-width: 54ch;
+  text-align: center;
+  color: var(--ink-3);
+  font-size: .83rem;
+  line-height: 1.75;
+}
+.empty-rule { color: var(--ink-3); font-size: .77rem; }
+
+.axis {
+  margin-bottom: 30px;
+  opacity: 0;
+  animation: axis-in 320ms var(--ease) forwards;
+}
+.axis:last-child { margin-bottom: 4px; }
+
+@keyframes axis-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.axis-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.axis-name {
+  font-size: .7rem;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.axis-trigger {
+  font-family: var(--mono);
+  font-size: .7rem;
+  color: var(--ink-3);
+}
+.axis-trigger::before { content: "trigger "; color: var(--ink-3); opacity: .8; }
+
+.axis-state {
+  margin-left: auto;
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+.axis[data-state="forked"] .axis-state { color: var(--fork); background: rgb(var(--fork-rgb) / .09); }
+.axis[data-state="converged"] .axis-state { color: var(--clear); background: rgb(var(--clear-rgb) / .09); }
+.axis[data-state="deadzone"] .axis-state { color: var(--ink-3); background: rgb(var(--dead-rgb) / .1); }
+.axis[data-state="vague"] .axis-state { color: var(--vague); background: rgb(var(--vague-rgb) / .09); }
+
+/* The well's height is reserved from the reading count and is NOT animated: the
+   merge runs entirely on transform and opacity, which the compositor handles
+   without a layout pass per frame. It also means the axes below hold still while
+   the author types, instead of jittering upward every time a clause resolves. */
+.beams {
+  position: relative;
+  height: calc(var(--count) * var(--beam-gap));
+}
+
+.beam {
+  position: absolute;
+  inset: 0 0 auto 0;
+  top: 50%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 52px;
+  align-items: center;
+  gap: 14px;
+  /* The raw absolute value. Everything visual below derives from it. */
+  --noul: 0;
+  --ink-hue: var(--dead-rgb);
+  transform: translateY(calc(var(--offset) * 1px - 50%));
+  /* Ink density, not luminance: a reading the clause barely supports is nearly
+     the colour of the paper. */
+  opacity: calc(.3 + var(--noul) * .7);
+  /* Confidence as focus: a dead-zone reading sits slightly off-register, the way
+     a misprint does, and snaps sharp as it resolves. */
+  filter: blur(calc((1 - var(--noul)) * 1.4px));
+  transition: transform var(--collapse) var(--ease),
+              opacity var(--collapse) var(--ease),
+              filter var(--collapse) var(--ease);
+}
+
+.beam-body { position: relative; min-width: 0; }
+
+.beam-label {
+  display: block;
+  font-size: .79rem;
+  color: var(--ink);
+  margin-bottom: 7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: calc(.52 + var(--noul) * .48);
+}
+
+/* The beam: an ink stroke whose inked fraction and weight are the Noul. The
+   gradient stop at --noul doubles the encoding â€” length as well as density. */
+.beam-line {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg,
+    rgb(var(--ink-hue) / calc(.42 + var(--noul) * .58)) 0%,
+    rgb(var(--ink-hue) / calc(.58 + var(--noul) * .42)) calc(var(--noul) * 100%),
+    rgb(var(--ink-hue) / .11) calc(var(--noul) * 100% + 1px),
+    rgb(var(--ink-hue) / .08) 100%);
+  /* Offset and soft blur: the lit stroke presses into the sheet. */
+  box-shadow: 0 1px calc(var(--noul) * 5px) rgb(var(--ink-hue) / calc(var(--noul) * .32));
+  transition: background var(--collapse) var(--ease), box-shadow var(--collapse) var(--ease);
+}
+
+.beam-value {
+  font-family: var(--mono);
+  font-size: .73rem;
+  text-align: right;
+  color: rgb(var(--ink-hue) / calc(.55 + var(--noul) * .45));
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.beam[data-verdict="high"] { --ink-hue: var(--clear-rgb); }
+.beam[data-verdict="inconclusive"], .beam[data-verdict="low"] { --ink-hue: var(--dead-rgb); }
+
+/* Forked: both readings answer yes. They take the fork's ink and pulse out of
+   phase, visibly refusing to settle onto one line. */
+.axis[data-state="forked"] .beam[data-lit="true"] {
+  --ink-hue: var(--fork-rgb);
+  animation: refuse 1.7s ease-in-out infinite;
+}
+.axis[data-state="forked"] .beam[data-lit="true"]:nth-child(2) { animation-delay: -.85s; }
+
+@keyframes refuse {
+  0%, 100% { transform: translateY(calc(var(--offset) * 1px - 50%)); }
+  50%      { transform: translateY(calc(var(--offset) * 1px - 50% + 2.5px)); }
+}
+
+/* Converged: the losing readings lift off the page while the surviving one
+   takes full ink, the two strokes merging into one. */
+.axis[data-state="converged"] .beam[data-lit="false"] {
+  opacity: 0;
+  filter: blur(3px);
+}
+.axis[data-state="converged"] .beam[data-lit="true"] {
+  --ink-hue: var(--clear-rgb);
+  opacity: 1;
+  filter: none;
+}
+
+.axis[data-lane="vagueness"] .beam { --ink-hue: var(--vague-rgb); }
+
+/* â”€â”€ lanes & footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lanes { display: grid; gap: 12px; margin-top: 16px; }
+
+.lane {
+  padding: 13px 15px;
+  border-radius: 6px;
+  font-size: .81rem;
+  line-height: 1.6;
+}
+
+.lane-vague {
+  border: 1px solid rgb(var(--vague-rgb) / .3);
+  background: rgb(var(--vague-rgb) / .045);
+  color: #6d4200;
+}
+
+.lane-vague .lane-head {
+  font-size: .7rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--vague);
+  margin-bottom: 6px;
+}
+.lane-vague .lane-why { color: #8a6a3a; font-size: .75rem; margin-top: 3px; }
+
+.lane-notes {
+  border: 1px solid var(--rule);
+  background: var(--paper-raise);
+  color: var(--ink-3);
+  font-size: .75rem;
+}
+.lane-notes code {
+  font-family: var(--mono);
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.footer {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 22px;
+  font-size: .72rem;
+  color: var(--ink-3);
+}
+.legend span { display: flex; align-items: center; gap: 8px; }
+
+.sw { width: 17px; height: 3px; border-radius: 2px; flex: none; }
+.sw-fork { background: var(--fork); box-shadow: 0 1px 4px rgb(var(--fork-rgb) / .35); }
+.sw-clear { background: var(--clear); box-shadow: 0 1px 4px rgb(var(--clear-rgb) / .35); }
+.sw-dead { background: rgb(var(--dead-rgb) / .4); }
+.sw-vague { background: var(--vague); box-shadow: 0 1px 4px rgb(var(--vague-rgb) / .3); }
+
+.provenance {
+  margin-top: 16px;
+  font-family: var(--mono);
+  font-size: .7rem;
+  color: var(--ink-3);
+}
+
+.trust {
+  margin: 9px 0 0;
+  font-size: .72rem;
+  color: var(--ink-3);
+}
+
+@media (max-width: 560px) {
+  .shell { padding: 30px 16px 52px; }
+  .reading-space { padding: 20px 16px; }
+  .beam { grid-template-columns: minmax(0, 1fr) 44px; gap: 11px; }
+  .latency { display: none; }
+}
+
+/* Motion is the pitch, but it is never required to read the state: ink weight,
+   colour, label and value all carry the same information. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

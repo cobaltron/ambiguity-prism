@@ -1,0 +1,21 @@
+{
+  "name": "ambiguity-prism",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Real-time detector for interpretation ambiguity in short high-stakes text, built on absolute per-reading Nouls.",
+  "type": "module",
+  "bin": {
+    "prism": "bin/prism.js"
+  },
+  "scripts": {
+    "analyze": "node bin/prism.js analyze fixtures/requirements.md",
+    "serve": "node server/proxy.js",
+    "calibrate": "node bin/prism.js calibrate fixtures/goldset.json",
+    "test": "node --test \"test/*.test.js\"",
+    "probe": "node bin/prism.js probe"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {}
+}

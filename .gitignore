@@ -1,0 +1,17 @@
+node_modules/
+
+# Secrets. .env.example is committed; .env is not.
+.env
+.env.local
+.env.*.local
+
+# Content-addressed Noul cache and review state.
+.cache/
+.prism/
+
+*.log
+
+# Wrangler local state.
+.wrangler/
+.dev.vars
+.impeccable/hook.cache.json

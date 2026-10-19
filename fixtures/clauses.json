@@ -1,0 +1,44 @@
+{
+  "note": "Hand-written forked/clean pairs, one per axis. The phase-1 exit check.",
+  "measured": "Against live jev-1.13.0 (2026-10-05), 2 of 6 pairs pass. The `expect` values below are HYPOTHESES written before the model was reachable, not measured facts: attachment (0.84/0.72) and obligation (0.53/0.31) hold; boundary (0.75/0.40), coordination (0.74/0.22) and reference (0.86/0.06) do NOT fork, and quantifier (0.90/0.58) misses HIGH by 0.02. Either these labels are over-eager or Jev resolves lexical ambiguity it should fork on. See README 'What the real model actually says'. Do not treat a FAIL here as a regression in the code.",
+  "expectation": "On the firing axis, the forked clause must NOT resolve to a single HIGH reading with the rest LOW, and the clean clause must. 'fork' means two readings HIGH at once (the multi-yes signature); 'deadzone' means the axis is unresolved but only one reading clears HIGH, which the UI shows as 'needs review' rather than as an ambiguity.",
+  "pairs": [
+    {
+      "axis": "boundary",
+      "expect": "fork",
+      "forked": "The service should retry failed requests up to three times before returning an error.",
+      "clean": "The service must retry a failed request up to three times in total, counting the first attempt."
+    },
+    {
+      "axis": "obligation",
+      "expect": "deadzone",
+      "note": "The §9 worked example puts 'should' at mandatory 0.44 / optional 0.63. Under HIGH=0.60 that is one HIGH and one dead-zone reading, so the honest outcome is 'needs review', not a fork. The design doc calls this a 'secondary obligation ambiguity', which its own numbers do not support as a two-HIGH signature.",
+      "forked": "The client should validate the signature before accepting the payload.",
+      "clean": "The client must validate the signature before accepting the payload."
+    },
+    {
+      "axis": "coordination",
+      "expect": "fork",
+      "forked": "The gateway must compress or encrypt the response body.",
+      "clean": "The gateway must compress the response body, encrypt it, or both."
+    },
+    {
+      "axis": "quantifier",
+      "expect": "fork",
+      "forked": "The worker shall archive all records that exceed the retention window.",
+      "clean": "The worker shall archive only those records that exceed the retention window."
+    },
+    {
+      "axis": "attachment",
+      "expect": "fork",
+      "forked": "The scheduler must process the queued request log before the next window opens.",
+      "clean": "The scheduler must process the queued-request log before the next window opens."
+    },
+    {
+      "axis": "reference",
+      "expect": "fork",
+      "forked": "The gateway shall forward the request to the primary server, and the worker must retry it after a timeout.",
+      "clean": "The gateway shall forward the request to the primary server, and the worker must retry the request after a timeout."
+    }
+  ]
+}

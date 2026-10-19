@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fcfbf9">
+<title>Ambiguity Prism</title>
+<link rel="stylesheet" href="prism.css">
+</head>
+<body>
+<div class="shell">
+
+  <header class="masthead">
+    <div class="brand">
+      <!-- One ray in, two out: the mechanism as the mark. -->
+      <svg class="brand-mark" width="26" height="20" viewBox="0 0 26 20" fill="none"
+        stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+        <path d="M1 10h8.4" opacity=".55"/>
+        <path d="M9.4 10 25 4.2" stroke="#b3261e"/>
+        <path d="M9.4 10 25 15.8" stroke="#0f6b45"/>
+        <circle cx="9.4" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+      </svg>
+      <h1>Ambiguity Prism</h1>
+    </div>
+    <!-- §13: the recall bound is stated in the header, not buried. -->
+    <p class="bound" id="bound">
+      Detects interpretation ambiguity only. Recall is bounded by the enumerated reading set.
+    </p>
+  </header>
+
+  <div class="banner" id="banner" hidden></div>
+
+  <section class="stage">
+    <div class="input-shell" id="inputShell">
+      <label class="input-label" for="clause">Clause</label>
+      <textarea id="clause" class="clause-input" rows="2" spellcheck="false"
+        autocomplete="off" autocapitalize="off"
+        placeholder="Type a requirement, an API contract line, a procedural step…"></textarea>
+      <div class="input-meta">
+        <span class="regime" id="regime" aria-live="polite">waiting</span>
+        <span class="sev" id="sev"></span>
+        <span class="latency" id="latency"></span>
+      </div>
+    </div>
+
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <!-- The reading space: one ink stroke per candidate reading, its weight bound
+       to that reading's raw Noul. -->
+  <section class="reading-space" id="readingSpace" aria-label="Reading space">
+    <p class="empty" id="empty">Each candidate reading is one stroke. Its weight is the raw Noul.<br>
+      <span class="empty-rule">One stroke inked, the rest faint — the clause reads one way.
+      Two strokes inked at once, refusing to merge — it reads two ways.</span></p>
+  </section>
+
+  <section class="lanes">
+    <div class="lane lane-vague" id="vagueLane" hidden></div>
+    <div class="lane lane-notes" id="notes" hidden></div>
+  </section>
+
+  <footer class="footer">
+    <div class="legend">
+      <span><i class="sw sw-fork"></i> forked — two readings answer yes at once</span>
+      <span><i class="sw sw-clear"></i> converged — one reading survives</span>
+      <span><i class="sw sw-dead"></i> dead zone — needs review, never silently passed</span>
+      <span><i class="sw sw-vague"></i> underspecified — a different defect, own lane</span>
+    </div>
+    <div class="provenance" id="provenance"></div>
+    <p class="trust">A stroke's weight is a raw absolute Noul. Comparative only — not a probability.</p>
+  </footer>
+
+</div>
+<script type="module" src="prism.js"></script>
+</body>
+</html>
